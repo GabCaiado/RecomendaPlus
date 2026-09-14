@@ -1,0 +1,31 @@
+# Controle de versão
+.git/
+.gitignore
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite3
+backend/recomenda.db
+
+# Node / Next.js
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/out/
+
+# Ambientes e Logs
+.env
+.env*.local
+*.log
+
+# IDEs e IDE metadata
+.vscode/
+.idea/
+.gemini/
+.DS_Store

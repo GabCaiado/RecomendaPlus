@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: recomenda_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - FLASK_ENV=development
+      - SECRET_KEY=recomenda-conteudo-secret-key-super-segura
+      - JWT_SECRET_KEY=recomenda-conteudo-jwt-secret-key-top-secret
+      - DATABASE_URL=sqlite:///recomenda.db
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3002
+    volumes:
+      - ./backend/recomenda.db:/app/recomenda.db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5000/api
+    container_name: recomenda_frontend
+    ports:
+      - "3002:3000"
+    environment:
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+    restart: unless-stopped
