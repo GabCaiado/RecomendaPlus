@@ -30,27 +30,34 @@ export default function Home() {
   // Selected Content Modal
   const [selectedContentModal, setSelectedContentModal] = useState<Conteudo | null>(null);
 
-  // Load saved Minha Lista from localStorage on mount
+  // Minha Lista is scoped per logged-in user (or "guest") so it never leaks between profiles
+  const myListStorageKey = `recomenda_my_list_ids_${user ? user.id : "guest"}`;
+
+  // Load saved Minha Lista from localStorage whenever the logged-in user changes
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("recomenda_my_list_ids");
-      if (saved) {
-        setMyListIds(JSON.parse(saved));
-      }
+      const saved = localStorage.getItem(myListStorageKey);
+      setMyListIds(saved ? JSON.parse(saved) : []);
     } catch (e) {
       console.error("Erro ao carregar Minha Lista do localStorage:", e);
+      setMyListIds([]);
     }
-  }, []);
+  }, [myListStorageKey]);
 
   // Handle Toggle Bookmark
   const handleToggleBookmark = (content: Conteudo) => {
+    if (!user) {
+      alert("Por favor, faça login para salvar sua Minha Lista!");
+      return;
+    }
+
     setMyListIds((prev) => {
       const exists = prev.includes(content.id);
       const updated = exists
         ? prev.filter((id) => id !== content.id)
         : [...prev, content.id];
       try {
-        localStorage.setItem("recomenda_my_list_ids", JSON.stringify(updated));
+        localStorage.setItem(myListStorageKey, JSON.stringify(updated));
       } catch (e) {
         console.error("Erro ao salvar Minha Lista no localStorage:", e);
       }
