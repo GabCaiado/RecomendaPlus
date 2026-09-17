@@ -124,5 +124,11 @@ def obter_historico():
     if not usuario:
         return jsonify({"erro": "Usuário não encontrado."}), 404
 
-    historico_serializado = [c.to_dict() for c in usuario.historico]
+    historico_serializado = []
+    for c in usuario.historico:
+        dados = c.to_dict()
+        dados['acesso_permitido'] = inferir_permissao_acesso(usuario.idade, c.classificacao_etaria)
+        dados['ja_assistiu'] = True
+        historico_serializado.append(dados)
+
     return jsonify(historico_serializado), 200
